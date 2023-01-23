@@ -33,7 +33,8 @@ Route::prefix('user')->middleware('auth:sanctum')
     ->controller(UserController::class)->name('user.')->group(function () {
         Route::post('', 'register')->name('register');
         Route::post('update/{id}', 'update')->name('update');
-        Route::post('updateStatus/{id}', 'updateStatus')->name('updateStatus');
+        Route::post('updateAdmin/{id}', 'updateAdmin')->name('updateAdmin');
+        Route::post('reset/{id}', 'reset')->name('reset');
         Route::get('', 'fetch')->name('fetch');
     });
 

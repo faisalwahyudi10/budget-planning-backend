@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateResetUserRequest;
+use App\Http\Requests\UpdateUserAdminRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserStatusRequest;
 use App\Models\User;
@@ -32,7 +34,7 @@ class UserController extends Controller
                 return ResponseFormatter::error('Unauthorized', 401);
             }
 
-            $user = User::where('username', $request->username)->first();
+            $user = User::where('username', $request->username)->where('status', 1)->first();
             if (!Hash::check($request->password, $user->password)) {
                 throw new Exception('Invalid password');
             }
@@ -44,7 +46,7 @@ class UserController extends Controller
             return ResponseFormatter::success([
                 'access_token' => $tokenResult,
                 'token_type' => 'Bearer',
-                'user' => $user
+                'user' => $user,
             ], 'Login success');
 
         } catch (Exception $e) {
@@ -148,6 +150,51 @@ class UserController extends Controller
             ]);
     
             return ResponseFormatter::success($user, 'User Updated');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
+    public function reset(UpdateResetUserRequest $request, $id)
+    {
+        try {
+            // Get user
+            $user = User::find($id);
+            
+            // Check if user exists
+            if (!$user) {
+                throw new Exception('User not found');
+            }
+
+            // Update user
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+    
+            return ResponseFormatter::success($user, 'User Password Reset');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
+    public function updateAdmin(UpdateUserAdminRequest $request, $id)
+    {
+        try {
+            // Get user
+            $user = User::find($id);
+            
+            // Check if user exists
+            if (!$user) {
+                throw new Exception('User not found');
+            }
+
+            // Update user
+            $user->update([
+                'role' => $request->role,
+                'status' => $request->status,
+            ]);
+    
+            return ResponseFormatter::success($user, 'User Password Reset');
         } catch (Exception $e) {
             return ResponseFormatter::error($e->getMessage(), 500);
         }

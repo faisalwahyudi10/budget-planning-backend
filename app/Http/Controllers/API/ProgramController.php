@@ -20,6 +20,7 @@ class ProgramController extends Controller
         $date = $request->input('date_program');
         $user = $request->input('user_id');
         $withActivity = $request->input('with_activities', false);
+        $realizedNull = $request->input('realized_null', false);
 
         // Get program
         $programQuery = Program::with('user.employee');
@@ -50,6 +51,10 @@ class ProgramController extends Controller
 
         if ($withActivity) {
             $programs->with('activities');
+        }
+
+        if ($realizedNull) {
+            $programs->whereNotNull('realized');
         }
 
         // Return response

@@ -31,7 +31,7 @@ class CreateEmployeeRequest extends FormRequest
             'gender' => 'required|string',
             'birth_date' => 'required|date',
             'phone' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,JPG|max:2048',
             'email' => 'nullable|string|email',
             'address' => 'required|string|max:255',
         ];

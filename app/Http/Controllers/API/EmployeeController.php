@@ -21,6 +21,7 @@ class EmployeeController extends Controller
         $nik = $request->input('nik');
         $position = $request->input('position');
         $isVerified = $request->input('is_verified', false);
+        $whereNoEm = $request->input('whereNoEm', false);
         // Get employee
         $employeeQuery = Employee::query();
 
@@ -52,6 +53,12 @@ class EmployeeController extends Controller
             $employees->where('is_verified', $isVerified);
         }
 
+        if ($whereNoEm) {
+            $employees->whereNotIn('id', function ($query) {
+                $query->select('employee_id')->from('users');
+            });
+        }
+
         // Return response
         return ResponseFormatter::success($employees->paginate($limit), 'Fetch success');
     }
@@ -61,7 +68,9 @@ class EmployeeController extends Controller
         try {
             // Upload photo
             if ($request->hasFile('photo')) {
-                $path = $request->file('photo')->store('public/userPhotos');
+               
+                $path =  $request->file('photo')->store('public/userPhotos');
+                
             }
     
             // create employee
