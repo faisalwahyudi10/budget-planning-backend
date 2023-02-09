@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEmployeeRequest;
+use App\Http\Requests\UpdateEmployeeImageRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeStatusRequest;
 use App\Models\Employee;
@@ -134,6 +135,36 @@ class EmployeeController extends Controller
         }
     }
 
+    public function updateImage(UpdateEmployeeImageRequest $request, $id)
+    {
+        try {
+            // Get employee
+            $employee = Employee::find($id);
+
+            // Check if employee exists
+            if (!$employee) {
+                throw new Exception('Employee not found');
+            }
+            // Upload photo
+            if ($request->hasFile('photo')) {
+                $path = $request->file('photo')->store('public/userPhotos');
+            }
+    
+            // update employee
+            $employee->update([
+                'photo' => isset($path) ? $path : $employee->photo,
+            ]);
+
+            if (!$employee) {
+                throw new Exception('Employee not Updated');
+            }
+    
+            return ResponseFormatter::success($employee, 'Employee Updated');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
     public function updateStatus(UpdateEmployeeStatusRequest $request, $id)
     {
         try {
@@ -156,11 +187,12 @@ class EmployeeController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             // Get employee
             $employee = Employee::find($id);
+            
 
             // Check if employee exists
             if (!$employee) {

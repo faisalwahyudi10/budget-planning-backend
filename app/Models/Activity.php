@@ -25,9 +25,11 @@ class Activity extends Model
         'document_plan_tw3',
         'document_plan_tw4',
         'document_realized_tw1',
-        'document_realized_tw2 ',
-        'document_realized_tw3 ',
-        'document_realized_tw4 ',
+        'document_realized_tw2',
+        'document_realized_tw3',
+        'document_realized_tw4',
+        'target',
+        'indicator',
         'program_id',
     ];
 

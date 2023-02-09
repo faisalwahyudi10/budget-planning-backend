@@ -19,8 +19,12 @@ class ExpenseController extends Controller
         $name = $request->input('name');
         $itemType = $request->input('item_type');
         $unitType = $request->input('unit_type');
+        $realized = $request->input('realized');
         $activity = $request->input('activity_id');
+        $withActivity = $request->input('with_activity', false);
         $withEmployee = $request->input('with_employee', false);
+        $withSum = $request->input('with_sum', false);
+        $orderByTw = $request->input('order_tw', false);
 
         // Get expense
         $expenseQuery = Expense::with('activity');
@@ -49,8 +53,24 @@ class ExpenseController extends Controller
             $expenses->where('unit_type', $unitType);
         }
 
+        if ($realized) {
+            $expenses->where('realized', $realized);
+        }
+
         if ($activity) {
             $expenses->where('activity_id', $activity);
+        }
+
+        if ($orderByTw) {
+            $expenses->orderBy('tw', 'ASC');
+        }
+
+        if ($withSum) {
+            $expenses->select(Expense::raw('sum(cost*amount) as jumlah, tw, activity_id'))->groupBy('tw', 'activity_id')->without('activity');
+        }
+
+        if ($withActivity) {
+            $expenses->with('activity');
         }
 
         if ($withEmployee) {
@@ -71,7 +91,8 @@ class ExpenseController extends Controller
                 'item_type' => $request->item_type,
                 'unit_type' => $request->unit_type,
                 'cost' => $request->cost,
-                'cost_realized' => $request->cost_realized,
+                'realized' => $request->realized,
+                'tw' => $request->tw,
                 'activity_id' => $request->activity_id,
             ]);
 
@@ -103,7 +124,8 @@ class ExpenseController extends Controller
                 'item_type' => $request->item_type,
                 'unit_type' => $request->unit_type,
                 'cost' => $request->cost,
-                'cost_realized' => $request->cost_realized,
+                'realized' => $request->realized,
+                'tw' => $request->tw,
                 'activity_id' => $request->activity_id,
             ]);
 

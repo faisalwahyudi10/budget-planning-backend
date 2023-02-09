@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateActivityRequest;
+use App\Http\Requests\RealizationActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -18,12 +19,18 @@ class ActivityController extends Controller
         $name = $request->input('name');
         $program = $request->input('program_id');
         $withEmployee = $request->input('with_employee', false);
+        $withExpenses1 = $request->input('with_expense1', false);
+        $withExpenses2 = $request->input('with_expense2', false);
+        $withExpenses3 = $request->input('with_expense3', false);
+        $notNull = $request->input('not_null', false);
 
         // Get activity
         $activityQuery = Activity::with('program');
 
         if ($id) {
+
             $activity = $activityQuery->with('program.user.employee')->find($id);
+            
 
             if ($activity) {
                 return ResponseFormatter::success($activity, 'Activity found');
@@ -44,6 +51,30 @@ class ActivityController extends Controller
 
         if ($withEmployee) {
             $activities->with('program.user.employee');
+        }
+
+        if ($notNull) {
+            
+        }
+
+        if ($withExpenses1) {
+            $activities->with(['expenses' => function ($query) {
+                $query->where('realized', 1);
+            }])->get();
+        }
+
+        if ($withExpenses2) {
+            $activities->with(['expenses' => function ($query) {
+                $query->where('realized', 2);
+            }])->get();
+        }
+
+        if ($withExpenses3) {
+            $activities->with(['expenses' => function ($query) {
+                $query->where('realized', 2)
+                ->selectRaw('sum(cost*amount) as jumlah, tw, activity_id')
+                ->groupBy('tw', 'activity_id');
+            }])->get();
         }
 
         // Return response
@@ -77,6 +108,8 @@ class ActivityController extends Controller
                 'document_realized_tw3' => $request->document_realized_tw3,
                 'document_realized_tw4' => $request->document_realized_tw4,
 
+                'target' => $request->target,
+                'indicator' => $request->indicator,
                 'program_id' => $request->program_id,
             ]);
 
@@ -125,7 +158,42 @@ class ActivityController extends Controller
                 'document_realized_tw3' => $request->document_realized_tw3,
                 'document_realized_tw4' => $request->document_realized_tw4,
 
+                'target' => $request->target,
+                'indicator' => $request->indicator,
                 'program_id' => $request->program_id,
+            ]);
+
+            if (!$activity) {
+                throw new Exception('Activity not Updated');
+            }
+    
+            return ResponseFormatter::success($activity, 'Activity Updated');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
+    public function realization(RealizationActivityRequest $request, $id)
+    {
+        try {
+            // Get activity
+            $activity = Activity::find($id);
+
+            // Check if activity exists
+            if (!$activity) {
+                throw new Exception('Activity not found');
+            }
+    
+            // update activity
+            $activity->update([
+                'activity_realized_tw1' => $request->activity_realized_tw1,
+                'activity_realized_tw2' => $request->activity_realized_tw2,
+                'activity_realized_tw3' => $request->activity_realized_tw3,
+                'activity_realized_tw4' => $request->activity_realized_tw4,
+                'document_realized_tw1' => $request->document_realized_tw1,
+                'document_realized_tw2' => $request->document_realized_tw2,
+                'document_realized_tw3' => $request->document_realized_tw3,
+                'document_realized_tw4' => $request->document_realized_tw4,
             ]);
 
             if (!$activity) {

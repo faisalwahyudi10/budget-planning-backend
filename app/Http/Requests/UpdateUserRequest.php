@@ -25,11 +25,8 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|string|max:255|unique:users',
             'old_password' => 'required|string',
             'password' => 'required|string|confirmed',
-            'role' => 'required|integer',
-            'employee_id' => 'required|exists:employees,id',
         ];
     }
 }

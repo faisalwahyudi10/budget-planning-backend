@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateResetUserRequest;
 use App\Http\Requests\UpdateUserAdminRequest;
+use App\Http\Requests\UpdateUsernameRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserStatusRequest;
 use App\Models\User;
@@ -26,6 +27,7 @@ class UserController extends Controller
             $request->validate([
                 'username' => 'required',
                 'password' => 'required',
+                // 'role' => 'required',
             ]);
 
             // Find user by username
@@ -62,6 +64,12 @@ class UserController extends Controller
 
         // Return Token
         return ResponseFormatter::success($token, 'Logout success');
+    }
+
+    public function auth()
+    {
+        $user = Auth::user();
+        return ResponseFormatter::success($user, 'User found');
     }
 
     public function fetch(Request $request)
@@ -126,7 +134,7 @@ class UserController extends Controller
         }
     }
 
-    public function update(UpdateUserRequest $request, $id)
+    public function updateReset(UpdateUserRequest $request, $id)
     {
         try {
             // Get user
@@ -143,10 +151,7 @@ class UserController extends Controller
 
             // Update user
             $user->update([
-                'username' => $request->username,
                 'password' => Hash::make($request->password),
-                'role' => $request->role,
-                'employee_id' => $request->employee_id,
             ]);
     
             return ResponseFormatter::success($user, 'User Updated');
@@ -217,6 +222,28 @@ class UserController extends Controller
             ]);
     
             return ResponseFormatter::success($user, 'User Status Updated');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
+    public function updateUsername(UpdateUsernameRequest $request, $id)
+    {
+        try {
+            // Get user
+            $user = User::find($id);
+            
+            // Check if user exists
+            if (!$user) {
+                throw new Exception('User not found');
+            }
+
+            // Update user
+            $user->update([
+                'username' => $request->username,
+            ]);
+    
+            return ResponseFormatter::success($user, 'Username Updated');
         } catch (Exception $e) {
             return ResponseFormatter::error($e->getMessage(), 500);
         }

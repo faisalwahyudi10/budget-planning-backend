@@ -27,15 +27,15 @@ class UpdateActivityRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|',
 
-            'activity_budget_tw1' => 'required|string',
-            'activity_budget_tw2' => 'required|string',
-            'activity_budget_tw3' => 'required|string',
-            'activity_budget_tw4' => 'required|string',
+            'activity_budget_tw1' => 'required|integer',
+            'activity_budget_tw2' => 'required|integer',
+            'activity_budget_tw3' => 'required|integer',
+            'activity_budget_tw4' => 'required|integer',
 
-            'activity_realized_tw1' => 'nullable|string',
-            'activity_realized_tw2' => 'nullable|string',
-            'activity_realized_tw3' => 'nullable|string',
-            'activity_realized_tw4' => 'nullable|string',
+            'activity_realized_tw1' => 'nullable|integer',
+            'activity_realized_tw2' => 'nullable|integer',
+            'activity_realized_tw3' => 'nullable|integer',
+            'activity_realized_tw4' => 'nullable|integer',
 
             'document_plan_tw1' => 'required|integer',
             'document_plan_tw2' => 'required|integer',
@@ -47,6 +47,8 @@ class UpdateActivityRequest extends FormRequest
             'document_realized_tw3' => 'nullable|integer',
             'document_realized_tw4' => 'nullable|integer',
 
+            'target' => 'required|string|max:255|',
+            'indicator' => 'required|string|max:255|',
             'program_id' => 'required|exists:programs,id',
         ];
     }

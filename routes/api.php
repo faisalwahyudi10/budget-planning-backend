@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Route;
 // Auth API
 Route::name('auth.')->controller(UserController::class)->group(function () {
     Route::post('login', 'login')->name('login');
-
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('user/me', 'auth')->name('auth');
         Route::post('logout', 'logout')->name('logout');
     });
 });
@@ -32,7 +32,8 @@ Route::name('auth.')->controller(UserController::class)->group(function () {
 Route::prefix('user')->middleware('auth:sanctum')
     ->controller(UserController::class)->name('user.')->group(function () {
         Route::post('', 'register')->name('register');
-        Route::post('update/{id}', 'update')->name('update');
+        Route::post('updateReset/{id}', 'updateReset')->name('updateReset');
+        Route::post('updateUsername/{id}', 'updateUsername')->name('updateUsername');
         Route::post('updateAdmin/{id}', 'updateAdmin')->name('updateAdmin');
         Route::post('reset/{id}', 'reset')->name('reset');
         Route::get('', 'fetch')->name('fetch');
@@ -45,6 +46,7 @@ Route::prefix('employee')->middleware('auth:sanctum')
         Route::post('', 'create')->name('create');
         Route::post('update/{id}', 'update')->name('update');
         Route::post('updateStatus/{id}', 'updateStatus')->name('updateStatus');
+        Route::post('updateImage/{id}', 'updateImage')->name('updateImage');
         Route::delete('{id}', 'destroy')->name('delete');
     });
 
@@ -54,6 +56,7 @@ Route::prefix('program')->middleware('auth:sanctum')
         Route::get('', 'fetch')->name('fetch');
         Route::post('', 'create')->name('create');
         Route::post('update/{id}', 'update')->name('update');
+        Route::post('realization/{id}', 'realization')->name('realization');
         Route::delete('{id}', 'destroy')->name('delete');
     });
 
@@ -63,6 +66,7 @@ Route::prefix('activity')->middleware('auth:sanctum')
         Route::get('', 'fetch')->name('fetch');
         Route::post('', 'create')->name('create');
         Route::post('update/{id}', 'update')->name('update');
+        Route::post('realization/{id}', 'realization')->name('realization');
         Route::delete('{id}', 'destroy')->name('delete');
     });
 

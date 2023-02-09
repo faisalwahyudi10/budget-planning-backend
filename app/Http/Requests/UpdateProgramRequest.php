@@ -27,9 +27,9 @@ class UpdateProgramRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|',
-            'date_program' => 'required|date',
-            'budget' => 'required|string',
-            'realized' => 'nullable|string',
+            'date_program' => 'required|integer',
+            'budget' => 'required|integer',
+            'realized' => 'nullable|integer',
             'user_id' => 'required|exists:users,id',
         ];
     }

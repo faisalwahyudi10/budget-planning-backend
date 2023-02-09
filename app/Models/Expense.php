@@ -16,7 +16,8 @@ class Expense extends Model
         'item_type',
         'unit_type',
         'cost',
-        'cost_realized',
+        'realized',
+        'tw',
         'activity_id',
     ];
 

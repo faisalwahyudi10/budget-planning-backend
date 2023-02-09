@@ -4,8 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class CreateProgramRequest extends FormRequest
+class UpdateUsernameRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +26,7 @@ class CreateProgramRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255|',
-            'date_program' => 'required|integer',
-            'budget' => 'required|integer',
-            'realized' => 'nullable|integer',
-            'user_id' => 'required|exists:users,id',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->id)],
         ];
     }
 }

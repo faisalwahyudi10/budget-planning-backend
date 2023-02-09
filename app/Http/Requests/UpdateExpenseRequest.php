@@ -26,11 +26,12 @@ class UpdateExpenseRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|',
-            'amount' => 'required|string',
+            'amount' => 'required|integer',
             'item_type' => 'required|string',
             'unit_type' => 'required|string',
-            'cost' => 'required|string',
-            'cost_realized' => 'nullable|string',
+            'cost' => 'required|integer',
+            'realized' => 'nullable|integer',
+            'tw' => 'required|integer',
             'activity_id' => 'required|exists:activities,id',
         ];
     }
