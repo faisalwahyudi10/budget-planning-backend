@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CreateExpenseRequest extends FormRequest
+class CreateDetailTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,15 +26,6 @@ class CreateExpenseRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|',
-            'amount' => 'required|integer',
-            'expense_type' => 'required|string',
-            'item_type' => 'required|string',
-            'detailType_id' => 'required|exists:detail_type,id',
-            'unit_type' => 'required|string',
-            'cost' => 'required|integer',
-            'tw' => 'required|integer',
-            'activity_id' => 'required|exists:activities,id',
-            'program_id' => 'required|exists:programs,id',
         ];
     }
 }

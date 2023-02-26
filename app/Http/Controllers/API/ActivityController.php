@@ -22,6 +22,10 @@ class ActivityController extends Controller
         $withExpenses1 = $request->input('with_expense1', false);
         $withExpenses2 = $request->input('with_expense2', false);
         $withExpenses3 = $request->input('with_expense3', false);
+        $withSemesterOp1 = $request->input('op_semester1', false);
+        $withSemesterOp2 = $request->input('op_semester2', false);
+        $withSemesterMo1 = $request->input('mo_semester1', false);
+        $withSemesterMo2 = $request->input('mo_semester2', false);
         $notNull = $request->input('not_null', false);
 
         // Get activity
@@ -53,29 +57,59 @@ class ActivityController extends Controller
             $activities->with('program.user.employee');
         }
 
+        if ($withSemesterOp1) {
+                $activities->with(['expenses' => function ($query) {
+                    $query->where('expense_type', 'Operasi')->whereIn('tw', [1,2])
+                    ->selectRaw('sum(cost*amount) as jumlah, activity_id')
+                    ->groupBy('activity_id');
+                }])->get();
+            }
+            if ($withSemesterOp2) {
+                $activities->with(['expenses' => function ($query) {
+                    $query->where('expense_type', 'Operasi')->whereIn('tw', [3,4])
+                    ->selectRaw('sum(cost*amount) as jumlah, activity_id')
+                    ->groupBy('activity_id');
+                }])->get();
+            }
+
+            if ($withSemesterMo1) {
+                $activities->with(['expenses' => function ($query) {
+                    $query->where('expense_type', 'Modal')->whereIn('tw', [1,2])
+                    ->selectRaw('sum(cost*amount) as jumlah, activity_id')
+                    ->groupBy('activity_id');
+                }])->get();
+            }
+            if ($withSemesterMo2) {
+                $activities->with(['expenses' => function ($query) {
+                    $query->where('expense_type', 'Modal')->whereIn('tw', [3,4])
+                    ->selectRaw('sum(cost*amount) as jumlah, activity_id')
+                    ->groupBy('activity_id');
+                }])->get();
+            }
+
         if ($notNull) {
             
         }
 
         if ($withExpenses1) {
-            $activities->with(['expenses' => function ($query) {
-                $query->where('realized', 1);
-            }])->get();
+            $activities->with(['expenses'])->get();
         }
 
         if ($withExpenses2) {
             $activities->with(['expenses' => function ($query) {
-                $query->where('realized', 2);
+                $query->whereNotNull('realized');
             }])->get();
         }
 
         if ($withExpenses3) {
             $activities->with(['expenses' => function ($query) {
-                $query->where('realized', 2)
+                $query->whereNotNull('realized')
                 ->selectRaw('sum(cost*amount) as jumlah, tw, activity_id')
                 ->groupBy('tw', 'activity_id');
             }])->get();
         }
+
+        
 
         // Return response
         return ResponseFormatter::success($activities->paginate($limit), 'Fetch success');

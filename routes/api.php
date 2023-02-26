@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ActivityController;
+use App\Http\Controllers\API\DetailTypeController;
 use App\Http\Controllers\API\EmployeeController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ProgramController;
@@ -73,6 +74,16 @@ Route::prefix('activity')->middleware('auth:sanctum')
 // Expense API
 Route::prefix('expense')->middleware('auth:sanctum')
     ->controller(ExpenseController::class)->name('expense.')->group(function () {
+        Route::get('', 'fetch')->name('fetch');
+        Route::post('', 'create')->name('create');
+        Route::post('update/{id}', 'update')->name('update');
+        Route::post('realization/{id}', 'realization')->name('realization');
+        Route::delete('{id}', 'destroy')->name('delete');
+    });
+
+// Detail Type API
+Route::prefix('detailType')->middleware('auth:sanctum')
+    ->controller(DetailTypeController::class)->name('detailType.')->group(function () {
         Route::get('', 'fetch')->name('fetch');
         Route::post('', 'create')->name('create');
         Route::post('update/{id}', 'update')->name('update');
