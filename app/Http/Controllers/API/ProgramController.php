@@ -31,6 +31,7 @@ class ProgramController extends Controller
         $withExpenseE = $request->input('with_expenses4', false);
         $realizedNull = $request->input('realized_null', false);
         $orderByYear = $request->input('order_year', false);
+        $groupByYear = $request->input('group_year', false);
         $withSemesterOp1 = $request->input('budget_operation1', false);
         $withSemesterOp2 = $request->input('budget_operation2', false);
         $withSemesterMo3 = $request->input('budget_modal3', false);
@@ -321,7 +322,7 @@ class ProgramController extends Controller
 
 
         if ($year1 && $year2) {
-            $programs->whereBetween('date_program', [$year1, $year2])->orderBy('date_program', 'DESC')->get();
+            $programs->whereBetween('date_program', [$year1, $year2]);
         }
 
         if ($user) {
@@ -330,6 +331,10 @@ class ProgramController extends Controller
 
         if ($orderByYear) {
             $programs->orderBy('date_program', 'DESC');
+        }
+
+        if ($groupByYear) {
+            $programs->selectRaw('sum(realized) as realized, date_program')->groupBy('date_program')->orderBy('date_program', 'DESC')->get();
         }
 
         if ($withActivity) {
